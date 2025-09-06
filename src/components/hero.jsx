@@ -1,100 +1,214 @@
 import { useState, useEffect } from "react";
+import heroImg from "../assets/hero-img.png";
 
 const Hero = () => {
-  // ------------------------------
-  // State for mouse position & glow effect
-  // ------------------------------
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [glowPos, setGlowPos] = useState({ x: 0, y: 0 });
-  const [color, setColor] = useState("37,99,235"); // Initial RGB color for glow & dynamic text
+  const [color, setColor] = useState("37,99,235");
 
-  // ------------------------------
-  // Typing effect state
-  // ------------------------------
   const phrases = ["Get Hired Faster", "Easy to Make", "Stand Out", "AI-Powered", "Save Hours"];
-  const [currentPhrase, setCurrentPhrase] = useState(""); // Currently displayed characters
-  const [phraseIndex, setPhraseIndex] = useState(0); // Which phrase we are on
-  const [charIndex, setCharIndex] = useState(0); // Which character index we are at
-  const [deleting, setDeleting] = useState(false); // Whether we are deleting or typing
+  const [currentPhrase, setCurrentPhrase] = useState("");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [deleting, setDeleting] = useState(false);
 
-  // ------------------------------
-  // Mouse movement handler
-  // Updates cursor position and dynamic color
-  // ------------------------------
+  // Mouse movement for glow
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     setMousePos({ x, y });
 
-    // Change RGB color dynamically based on cursor position
     const r = Math.min(255, Math.floor((x / rect.width) * 255));
     const g = 99;
     const b = Math.min(255, Math.floor((y / rect.height) * 255));
     setColor(`${r},${g},${b}`);
   };
 
-  // ------------------------------
-  // Glow effect follows cursor smoothly
-  // ------------------------------
+  // Typing effect
   useEffect(() => {
-    const id = setInterval(() => {
-      setGlowPos((prev) => ({
-        x: prev.x + (mousePos.x - prev.x) * 0.25, // faster follow
-        y: prev.y + (mousePos.y - prev.y) * 0.25,
-      }));
-    }, 16); // roughly 60fps
-    return () => clearInterval(id);
-  }, [mousePos]);
+    let timeout;
+    const fullText = phrases[phraseIndex];
 
-  // ------------------------------
-  // Typing effect logic
-  // ------------------------------
-  useEffect(() => {
-    const typingSpeed = deleting ? 40 : 80; // faster typing
-    const pauseAfterComplete = 300; // shorter pause after word completes
-
-    const timeout = setTimeout(() => {
-      const fullText = phrases[phraseIndex];
-
-      if (!deleting) {
-        // Add next character
-        setCurrentPhrase(fullText.slice(0, charIndex + 1));
-        setCharIndex((prev) => prev + 1);
-
-        // When phrase completes, start deleting after a short pause
-        if (charIndex + 1 === fullText.length) {
-          setTimeout(() => setDeleting(true), pauseAfterComplete);
-        }
+    if (!deleting) {
+      if (charIndex < fullText.length) {
+        timeout = setTimeout(() => setCharIndex(charIndex + 1), 120);
       } else {
-        // Remove characters when deleting
-        setCurrentPhrase(fullText.slice(0, charIndex - 1));
-        setCharIndex((prev) => prev - 1);
-
-        // Once deleted completely, move to next phrase
-        if (charIndex - 1 === 0) {
-          setDeleting(false);
-          setPhraseIndex((prev) => (prev + 1) % phrases.length);
-        }
+        timeout = setTimeout(() => setDeleting(true), 1000);
       }
-    }, typingSpeed);
+    } else {
+      if (charIndex > 0) {
+        timeout = setTimeout(() => setCharIndex(charIndex - 1), 40);
+      } else {
+        setDeleting(false);
+        setPhraseIndex((prev) => (prev + 1) % phrases.length);
+        timeout = setTimeout(() => {}, 500);
+      }
+    }
 
+    setCurrentPhrase(fullText.slice(0, charIndex));
     return () => clearTimeout(timeout);
   }, [charIndex, deleting, phraseIndex, phrases]);
 
+  // Glow circle smooth follow
+  useEffect(() => {
+    const id = setInterval(() => {
+      setGlowPos((prev) => ({
+        x: prev.x + (mousePos.x - prev.x) * 0.25,
+        y: prev.y + (mousePos.y - prev.y) * 0.25,
+      }));
+    }, 16);
+    return () => clearInterval(id);
+  }, [mousePos]);
+
+  // Floating circles
+  const [circles, setCircles] = useState(
+    Array.from({ length: 8 }).map(() => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      size: 40 + Math.random() * 60,
+      targetX: Math.random() * window.innerWidth,
+      targetY: Math.random() * window.innerHeight,
+      speed: 0.02 + Math.random() * 0.03,
+    }))
+  );
+
+  useEffect(() => {
+    let animationFrame;
+    const animate = () => {
+      setCircles((prev) =>
+        prev.map((c) => {
+          let dx = c.targetX - c.x;
+          let dy = c.targetY - c.y;
+          let nx = c.x + dx * c.speed;
+          let ny = c.y + dy * c.speed;
+          if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+            return {
+              ...c,
+              targetX: Math.random() * window.innerWidth,
+              targetY: Math.random() * window.innerHeight,
+              x: nx,
+              y: ny,
+            };
+          }
+          return { ...c, x: nx, y: ny };
+        })
+      );
+      animationFrame = requestAnimationFrame(animate);
+    };
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, []);
+
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen px-4 overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-        position: 'relative',
-      }}
+      className="h-screen relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', margin: 0,}}
       onMouseMove={handleMouseMove}
     >
-      {/* ------------------------------
-          Glow circle that follows the cursor
-          ------------------------------ */}
+      {/* Max-width wrapper to keep content away from edges */}
+      <div className="flex items-center justify-between max-w-[1400px] w-full mx-auto px-8 sm:px-16 lg:px-24 h-full" style={{
+        padding: '0 55px'
+      }}>
+        {/* Left Content */}
+        <div className="flex flex-col justify-center max-w-lg mr-16 z-10">
+          <h1
+            className="text-7xl sm:text-8xl font-extrabold mb-6 leading-tight"
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              color: `rgb(${color})`,
+              textShadow: `0 0 50px rgba(${color},0.6)`,
+            }}
+          >
+            Create a <span style={{ color: `rgb(${color})`, textShadow: `0 0 60px rgba(${color},0.8)` }}>Job-winning</span> Resume
+          </h1>
+
+          <h1
+            className="text-5xl sm:text-6xl font-semibold mb-8"
+            style={{
+              fontFamily: 'Roboto, sans-serif',
+              textShadow: `0 0 40px rgba(${color},0.3)`,
+              minHeight: '3.5rem',
+              color: '#2563eb',
+              marginTop: '.5rem',
+            }}
+          >
+            {currentPhrase}
+            <span className="animate-blink">|</span>
+          </h1>
+
+          <h3
+            className="text-2xl text-gray-600 mb-12 leading-relaxed"
+            style={{
+              fontFamily: 'Roboto, sans-serif',
+              textShadow: `0 0 30px rgba(${color},0.3)`,
+              fontWeight: '300',
+              marginTop: '1rem',
+              opacity: '.75'
+            }}
+          >
+            Enter your details and let AI craft a professional resume <br /> and cover for you, save hours of stress and <br /> stand out from the crowd.
+          </h3>
+
+          {/* Bouncing arrow / Button */}
+          <div className="flex flex-col"
+            style={{
+              width: '100%',
+              marginTop: '3rem',
+            }}
+          >
+            {/* Bouncing arrow */}
+            <div className="flex justify-center mb-4">
+              <span
+                style={{
+                  display: 'inline-block',
+                  fontSize: '1.5rem',
+                  color: `rgb(${color})`,
+                  opacity: 0.8,
+                  animation: 'bounce 1s infinite',
+                }}
+              >
+                ↓
+              </span>
+            </div>
+
+            <button
+              style={{
+                backgroundColor: `rgb(${color})`,
+                color: 'white',
+                border: 'none',
+                padding: '1rem 3.5rem',
+                marginTop: '0.5rem',
+                borderRadius: '0.75rem',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '1.25rem',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease-in-out',
+                boxShadow: `0 0 50px rgba(${color},0.6)`,
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = `0 0 70px rgba(${color},0.8)`;
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = `0 0 50px rgba(${color},0.6)`;
+                e.target.style.transform = "scale(1)";
+              }}
+            >
+              Get Hired Faster!
+            </button>
+          </div>
+        </div>
+
+        {/* Right Image */}
+        <div className="flex justify-end items-center max-w-md h-full z-10" style={{
+          width: '40rem'
+        }}>
+          <img src={heroImg} alt="Hero" className="h-auto max-h-[85%] object-contain" />
+        </div>
+      </div>
+
+      {/* Glow circle */}
       <div
         style={{
           position: 'absolute',
@@ -104,96 +218,40 @@ const Hero = () => {
           height: '400px',
           background: `radial-gradient(circle, rgba(${color},0.4) 0%, transparent 70%)`,
           borderRadius: '50%',
-          pointerEvents: 'none', // so it doesn't block clicks
+          pointerEvents: 'none',
           transform: `translate(${glowPos.x - 200}px, ${glowPos.y - 200}px)`,
-          filter: 'blur(80px)', // smooth glow
+          filter: 'blur(80px)',
           transition: 'transform 0.05s linear',
         }}
       ></div>
 
-      {/* ------------------------------
-          Static heading
-          ------------------------------ */}
-      <h1
-        className="text-8xl sm:text-9xl font-extrabold text-gray-800 mb-4 text-center leading-tight relative z-10"
-        style={{
-          fontFamily: 'Inter, sans-serif',
-          lineHeight: '1.2',
-          textShadow: `0 0 40px rgba(${color},0.6)`,
-        }}
-      >
-        Create a <span style={{ color: `rgb(${color})`, textShadow: `0 0 50px rgba(${color},0.8)` }}>Job-winning</span> Resume
-      </h1>
+      {/* Smooth floating circles */}
+      {circles.map((c, i) => (
+        <div
+          key={i}
+          className="absolute rounded-full opacity-20"
+          style={{
+            width: `${c.size}px`,
+            height: `${c.size}px`,
+            top: `${c.y}px`,
+            left: `${c.x}px`,
+            backgroundColor: `rgba(${color},0.2)`,
+          }}
+        ></div>
+      ))}
 
-      {/* ------------------------------
-          Dynamic typing line
-          ------------------------------ */}
-      <h2
-        className="text-5xl sm:text-6xl font-semibold text-gray-700 mb-8 text-center relative z-10"
-        style={{
-          fontFamily: 'Roboto, sans-serif',
-          textShadow: `0 0 30px rgba(${color},0.3)`,
-          minHeight: '3rem', // prevents layout shift
-          color: `rgb(${color})`, // match Job-winning color
-        }}
-      >
-        {currentPhrase}
-        <span className="animate-blink">|</span>
-      </h2>
-
-      {/* ------------------------------
-          Description paragraph
-          ------------------------------ */}
-      <p
-        className="text-4xl text-gray-600 mb-8 text-center max-w-4xl leading-relaxed relative z-10"
-        style={{
-          fontFamily: 'Roboto, sans-serif',
-          textShadow: `0 0 30px rgba(${color},0.3)`,
-        }}
-      >
-        Enter your details and let AI craft a professional resume <br /> and cover for you, save hours of stress and <br /> stand out from the crowd.
-      </p>
-
-      {/* ------------------------------
-          Button with glow effect
-          ------------------------------ */}
-      <button
-        style={{
-          backgroundColor: `rgb(${color})`,
-          color: 'white',
-          border: 'none',
-          padding: '0.75rem 2rem',
-          borderRadius: '0.5rem',
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '1.125rem',
-          fontWeight: '500',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease-in-out',
-          boxShadow: `0 0 40px rgba(${color},0.6)`,
-          position: 'relative',
-          zIndex: 10,
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.boxShadow = `0 0 60px rgba(${color},0.8)`;
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.boxShadow = `0 0 40px rgba(${color},0.6)`;
-        }}
-      >
-        Get Started
-      </button>
-
-      {/* ------------------------------
-          Blinking cursor for typing effect
-          ------------------------------ */}
       <style>
         {`
           .animate-blink {
             display: inline-block;
             animation: blink 1s step-start infinite;
           }
-          @keyframes blink {
-            50% { opacity: 0; }
+          @keyframes blink { 50% { opacity: 0; } }
+
+          @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
           }
         `}
       </style>

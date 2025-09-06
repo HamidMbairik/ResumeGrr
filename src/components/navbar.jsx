@@ -23,11 +23,11 @@ const Navbar = () => {
   return (
     <nav
       style={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
-        zIndex: 50,
+        zIndex: 5000000,
         width: '100%',
-        transition: 'background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease',
+        transition: 'background-color 5s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease',
 
         // Transparent at top, semi-solid + blur on scroll
         backgroundColor: isScrolled ? 'rgba(255,255,255,0.95)' : 'transparent',
