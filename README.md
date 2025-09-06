@@ -1,16 +1,26 @@
-# React + Vite
+# ResumeGrr - AI-Powered Resume Builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+<img width="1366" height="642" alt="image" src="https://github.com/user-attachments/assets/3de90c55-ea87-404c-81bb-1f31e2c63bed" />
 
 
-<img width="1366" height="642" alt="image" src="https://github.com/user-attachments/assets/9c3aad75-dc08-4a57-899d-de377eec1a9a" />
+ResumeGrr is a ReactJS application that helps users **create professional, job-winning resumes** quickly and efficiently. It leverages AI to save hours of effort while making your resume stand out.
 
+---
+
+## **Features**
+
+- Dynamic **typing effect** in the Hero section
+- Interactive **glow and floating circles**
+- Bouncing arrow pointing to the call-to-action button
+- Fully responsive layout with spacing that never touches screen edges
+- AI-powered resume creation workflow (enter your details and let the app generate a resume)
+- Modern UI with smooth animations and vibrant colors
+
+---
+
+## **Installation**
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/HamidMbairik/ResumeGrr.git
