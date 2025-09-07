@@ -1,18 +1,39 @@
+// src/components/Hero.jsx
 import { useState, useEffect } from "react";
 import heroImg from "../assets/hero-img.png";
 
+/*
+  NOTE: PHRASES declared outside the component so its reference is stable across renders.
+  If you instead declare `phrases` inside the component, the array object is new on every render
+  which will cause effects that depend on it to re-run constantly and break timing.
+*/
+const PHRASES = [
+  "And Get Hired Faster !",
+  "That Is Easy to Make !",
+  "And Stand Out !",
+  "That Is AI-Powered !",
+  "And Save Hours !",
+];
+
 const Hero = () => {
+  // ---------- Visual + interaction state ----------
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [glowPos, setGlowPos] = useState({ x: 0, y: 0 });
   const [color, setColor] = useState("37,99,235");
 
-  const phrases = ["Get Hired Faster", "Easy to Make", "Stand Out", "AI-Powered", "Save Hours"];
-  const [currentPhrase, setCurrentPhrase] = useState("");
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [deleting, setDeleting] = useState(false);
+  // ---------- Typewriter state ----------
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0); // which phrase index we're on
+  const [displayText, setDisplayText] = useState(""); // the visible text being typed/deleted
+  const [isDeleting, setIsDeleting] = useState(false); // typing vs deleting
 
-  // Mouse movement for glow
+  // Tweak these to change feel
+  const TYPING_SPEED = 80; // base ms per character when typing
+  const DELETING_SPEED = 40; // base ms per character when deleting
+  const PAUSE_BEFORE_DELETING = 1000; // ms to wait after fully typed before deleting
+  const PAUSE_AFTER_DELETING = 300; // ms to wait after fully deleted before starting next
+  const SPEED_VARIANCE = 40; // adds human-like randomness to speeds
+
+  // ---------- Mouse movement for glow ----------
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -25,43 +46,18 @@ const Hero = () => {
     setColor(`${r},${g},${b}`);
   };
 
-  // Typing effect
-  useEffect(() => {
-    let timeout;
-    const fullText = phrases[phraseIndex];
-
-    if (!deleting) {
-      if (charIndex < fullText.length) {
-        timeout = setTimeout(() => setCharIndex(charIndex + 1), 120);
-      } else {
-        timeout = setTimeout(() => setDeleting(true), 1000);
-      }
-    } else {
-      if (charIndex > 0) {
-        timeout = setTimeout(() => setCharIndex(charIndex - 1), 40);
-      } else {
-        setDeleting(false);
-        setPhraseIndex((prev) => (prev + 1) % phrases.length);
-        timeout = setTimeout(() => {}, 500);
-      }
-    }
-
-    setCurrentPhrase(fullText.slice(0, charIndex));
-    return () => clearTimeout(timeout);
-  }, [charIndex, deleting, phraseIndex, phrases]);
-
-  // Glow circle smooth follow
+  // Smooth follow for glow - small lerp using setInterval (keeps UI smooth)
   useEffect(() => {
     const id = setInterval(() => {
       setGlowPos((prev) => ({
         x: prev.x + (mousePos.x - prev.x) * 0.25,
         y: prev.y + (mousePos.y - prev.y) * 0.25,
       }));
-    }, 16);
+    }, 16); // ~60fps
     return () => clearInterval(id);
   }, [mousePos]);
 
-  // Floating circles
+  // ---------- Floating circles animation (unchanged) ----------
   const [circles, setCircles] = useState(
     Array.from({ length: 8 }).map(() => ({
       x: Math.random() * window.innerWidth,
@@ -100,72 +96,141 @@ const Hero = () => {
     return () => cancelAnimationFrame(animationFrame);
   }, []);
 
+  // ---------- Robust typewriter effect ----------
+  /*
+    Pattern: effect depends on displayText / isDeleting / currentPhraseIndex.
+    Each pass schedules exactly one setTimeout to update the displayed text (or flip state),
+    and clears it in cleanup. This avoids multiple competing timeouts and avoids
+    re-running due to a changing array reference.
+  */
+  useEffect(() => {
+    const currentPhrase = PHRASES[currentPhraseIndex];
+    let timeoutId;
+
+    // Helper to get slightly randomized speed for more human feel
+    const rand = (base) => base + Math.floor(Math.random() * SPEED_VARIANCE);
+
+    if (!isDeleting) {
+      // Typing mode
+      if (displayText === currentPhrase) {
+        // Fully typed, pause then start deleting
+        timeoutId = setTimeout(() => setIsDeleting(true), PAUSE_BEFORE_DELETING);
+      } else {
+        // Add next character
+        const next = currentPhrase.slice(0, displayText.length + 1);
+        timeoutId = setTimeout(() => setDisplayText(next), rand(TYPING_SPEED));
+      }
+    } else {
+      // Deleting mode
+      if (displayText === "") {
+        // Fully deleted — advance to next phrase after a short pause
+        timeoutId = setTimeout(() => {
+          setIsDeleting(false);
+          setCurrentPhraseIndex((i) => (i + 1) % PHRASES.length);
+        }, PAUSE_AFTER_DELETING);
+      } else {
+        // Remove one character
+        const next = currentPhrase.slice(0, displayText.length - 1);
+        timeoutId = setTimeout(() => setDisplayText(next), rand(DELETING_SPEED));
+      }
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [displayText, isDeleting, currentPhraseIndex]);
+
+  // ---------- Render ----------
   return (
     <div
       className="h-screen relative overflow-hidden"
-      style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)', margin: 0,}}
+      style={{
+        background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
+        margin: 0,
+      }}
       onMouseMove={handleMouseMove}
     >
-      {/* Max-width wrapper to keep content away from edges */}
-      <div className="flex items-center justify-between max-w-[1400px] w-full mx-auto px-8 sm:px-16 lg:px-24 h-full" style={{
-        padding: '0 55px'
-      }}>
+      <div
+        className="flex items-center justify-between max-w-[1400px] w-full mx-auto px-8 sm:px-16 lg:px-24 h-full"
+        style={{
+          padding: "0 55px",
+        }}
+      >
         {/* Left Content */}
         <div className="flex flex-col justify-center max-w-lg mr-16 z-10">
+          {/* Big title */}
           <h1
             className="text-7xl sm:text-8xl font-extrabold mb-6 leading-tight"
             style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: "Inter, sans-serif",
               color: `rgb(${color})`,
               textShadow: `0 0 50px rgba(${color},0.6)`,
             }}
           >
-            Create a <span style={{ color: `rgb(${color})`, textShadow: `0 0 60px rgba(${color},0.8)` }}>Job-winning</span> Resume
+            Create a{" "}
+            <span
+              style={{
+                color: `rgb(${color})`,
+                textShadow: `0 0 60px rgba(${color},0.8)`,
+              }}
+            >
+              Job-winning
+            </span>{" "}
+            Resume
           </h1>
 
+          {/* Typewriter - 'displayText' updates char-by-char */}
           <h1
             className="text-5xl sm:text-6xl font-semibold mb-8"
             style={{
-              fontFamily: 'Roboto, sans-serif',
+              fontFamily: "Roboto, sans-serif",
               textShadow: `0 0 40px rgba(${color},0.3)`,
-              minHeight: '3.5rem',
-              color: '#2563eb',
-              marginTop: '.5rem',
+              minHeight: "3.5rem",
+              color: "#2563eb",
+              marginTop: ".5rem",
+              whiteSpace: "nowrap",
+              fontSize: '2.9rem',
+              fontWeight: '400', // keep the typed phrase on one line
             }}
+            aria-live="polite" // accessibility: announce changes
           >
-            {currentPhrase}
-            <span className="animate-blink">|</span>
+            {displayText}
+            {/* custom blinking cursor (independent of React re-renders) */}
+            <span
+              style={{
+                display: "inline-block",
+                width: 2,
+                height: "1.1em",
+                marginLeft: 8,
+                verticalAlign: "bottom",
+                backgroundColor: `rgb(${color})`,
+                animation: "resumegrr-blink 900ms steps(2, start) infinite",
+              }}
+              aria-hidden="true"
+            />
           </h1>
 
           <h3
             className="text-2xl text-gray-600 mb-12 leading-relaxed"
             style={{
-              fontFamily: 'Roboto, sans-serif',
+              fontFamily: "Roboto, sans-serif",
               textShadow: `0 0 30px rgba(${color},0.3)`,
-              fontWeight: '300',
-              marginTop: '1rem',
-              opacity: '.75'
+              fontWeight: "300",
+              marginTop: "1rem",
+              opacity: ".75",
             }}
           >
             Enter your details and let AI craft a professional resume <br /> and cover for you, save hours of stress and <br /> stand out from the crowd.
           </h3>
 
-          {/* Bouncing arrow / Button */}
-          <div className="flex flex-col"
-            style={{
-              width: '100%',
-              marginTop: '3rem',
-            }}
-          >
-            {/* Bouncing arrow */}
+          {/* CTA */}
+          <div className="flex flex-col" style={{ width: "100%", marginTop: "3rem" }}>
             <div className="flex justify-center mb-4">
               <span
                 style={{
-                  display: 'inline-block',
-                  fontSize: '1.5rem',
+                  display: "inline-block",
+                  fontSize: "1.5rem",
                   color: `rgb(${color})`,
                   opacity: 0.8,
-                  animation: 'bounce 1s infinite',
+                  animation: "bounce 1s infinite",
                 }}
               >
                 ↓
@@ -175,16 +240,16 @@ const Hero = () => {
             <button
               style={{
                 backgroundColor: `rgb(${color})`,
-                color: 'white',
-                border: 'none',
-                padding: '1rem 3.5rem',
-                marginTop: '0.5rem',
-                borderRadius: '0.75rem',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '1.25rem',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease-in-out',
+                color: "white",
+                border: "none",
+                padding: "1rem 3.5rem",
+                marginTop: "0.5rem",
+                borderRadius: "0.75rem",
+                fontFamily: "Inter, sans-serif",
+                fontSize: "1.25rem",
+                fontWeight: "500",
+                cursor: "pointer",
+                transition: "all 0.3s ease-in-out",
                 boxShadow: `0 0 50px rgba(${color},0.6)`,
               }}
               onMouseEnter={(e) => {
@@ -201,31 +266,34 @@ const Hero = () => {
         </div>
 
         {/* Right Image */}
-        <div className="flex justify-end items-center max-w-md h-full z-10" style={{
-          width: '40rem'
-        }}>
+        <div
+          className="flex justify-end items-center max-w-md h-full z-10"
+          style={{
+            width: "40rem",
+          }}
+        >
           <img src={heroImg} alt="Hero" className="h-auto max-h-[85%] object-contain" />
         </div>
       </div>
 
-      {/* Glow circle */}
+      {/* soft radial glow that follows the mouse */}
       <div
         style={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
-          width: '400px',
-          height: '400px',
+          width: "400px",
+          height: "400px",
           background: `radial-gradient(circle, rgba(${color},0.4) 0%, transparent 70%)`,
-          borderRadius: '50%',
-          pointerEvents: 'none',
+          borderRadius: "50%",
+          pointerEvents: "none",
           transform: `translate(${glowPos.x - 200}px, ${glowPos.y - 200}px)`,
-          filter: 'blur(80px)',
-          transition: 'transform 0.05s linear',
+          filter: "blur(80px)",
+          transition: "transform 0.05s linear",
         }}
       ></div>
 
-      {/* Smooth floating circles */}
+      {/* floating circles */}
       {circles.map((c, i) => (
         <div
           key={i}
@@ -242,16 +310,17 @@ const Hero = () => {
 
       <style>
         {`
-          .animate-blink {
-            display: inline-block;
-            animation: blink 1s step-start infinite;
-          }
-          @keyframes blink { 50% { opacity: 0; } }
-
           @keyframes bounce {
             0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
             40% { transform: translateY(-10px); }
             60% { transform: translateY(-5px); }
+          }
+
+          /* cursor blink animation */
+          @keyframes resumegrr-blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
           }
         `}
       </style>
