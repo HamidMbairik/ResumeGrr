@@ -20,6 +20,11 @@ html {
   scroll-behavior: smooth;
 }
 
+section {
+  scroll-margin-top: 80px; /* equal to navbar height */
+}
+
+
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: #111;
