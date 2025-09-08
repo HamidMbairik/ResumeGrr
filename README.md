@@ -18,6 +18,8 @@ ResumeGrr is a ReactJS application that helps users **create professional, job-w
 
 ---
 
+<img width="1100" height="2098" alt="localhost_5173_ (1)" src="https://github.com/user-attachments/assets/9bd4f52f-7380-4763-a91a-ada978ce2ee8" />
+
 ## **Installation**
 
 1. Clone the repository:
