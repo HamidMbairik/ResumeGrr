@@ -45,7 +45,8 @@ const ReviewsSection = () => {
       className="relative w-full py-24 overflow-hidden bg-gradient-to-b from-white via-gray-50 to-white"
       style={{ 
         scrollMarginTop: "80px",
-        background: "linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%)",
+        width: "100%",
+        //background: "linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%)",
       }} // to offset fixed navbar
     >
       {/* Section Title with glow like Features */}
@@ -69,6 +70,12 @@ const ReviewsSection = () => {
         <motion.div
           className="flex gap-8 px-8"
           animate={{ x: ["0%", "-50%"] }}
+          style={{
+            display: "flex",
+            gap: "2rem",
+            paddingBottom: "4rem",
+            willChange: "transform",
+          }}
           transition={{
             repeat: Infinity,
             duration: 30,
@@ -84,12 +91,11 @@ const ReviewsSection = () => {
                 border: `1.5px solid rgba(${accentColor},0.3)`,
                 minWidth: "300px",
                 maxWidth: "350px",
-                boxShadow: `0 0 40px rgba(${accentColor},0.2)`,
+                boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
                 textAlign: "center",
                 padding: "1.5rem",
                 marginBottom: "1rem",
                 marginTop: "2rem",
-                marginRight: "3rem",
               }}
             >
               {/* Glowing background effect */}

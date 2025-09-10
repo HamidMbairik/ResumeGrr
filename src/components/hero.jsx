@@ -143,7 +143,7 @@ const Hero = () => {
     <div
       className="h-screen relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
+        //background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
         margin: 0,
       }}
       onMouseMove={handleMouseMove}

@@ -6,7 +6,7 @@ const CounterSection = () => {
 
   useEffect(() => {
     // Pick a random number between 1200 and 1500 when component mounts
-    const randomTarget = Math.floor(Math.random() * (1500 - 1200 + 1)) + 1200
+    const randomTarget = Math.floor(Math.random() * (2500 - 1200 + 1)) + 1200
     setTarget(randomTarget)
 
     let current = 0
@@ -30,7 +30,7 @@ const CounterSection = () => {
         width: "100%",
         background: "linear-gradient(90deg, #2563eb, #4f46e5)",
         color: "white",
-        padding: "3rem 1rem",
+        padding: "2rem 0",
         textAlign: "center",
         boxShadow: "inset 0 8px 16px rgba(0,0,0,0.2), inset 0 -8px 16px rgba(0,0,0,0.2)",
       }}
