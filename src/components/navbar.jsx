@@ -10,7 +10,6 @@ const Navbar = () => {
 
   const links = ['Home', 'Features', 'Try it', 'Pricing']
 
-  // Click handler
   const handleLinkClick = (linkName) => {
     setActiveLink(linkName)
     if (isMobile) {
@@ -22,7 +21,6 @@ const Navbar = () => {
     }
   }
 
-  // Detect scroll for styling + active link
   useEffect(() => {
     const onScroll = () => {
       setIsScrolled(window.scrollY > 10)
@@ -39,7 +37,6 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Detect viewport size for responsive behavior
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768
@@ -55,7 +52,6 @@ const Navbar = () => {
 
   return (
     <nav
-      className="navbar"
       ref={navRef}
       style={{
         position: 'fixed',
@@ -79,68 +75,71 @@ const Navbar = () => {
               fontFamily: 'Inter, sans-serif',
               margin: 0,
               cursor: 'pointer',
+              flexShrink: 0,
             }}
             onClick={() => handleLinkClick('Home')}
           >
             ResumeGrr
           </h1>
 
-          {/* Right side: desktop nav or mobile hamburger */}
-          {!isMobile ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-              <div style={{ display: 'flex', gap: '2rem' }}>
-                {links.map((link) => (
-                  <a
-                    key={link}
-                    href={`#${link}`}
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleLinkClick(link)
-                    }}
+          {/* Desktop Center Links */}
+          {!isMobile && (
+            <div style={{ display: 'flex', flex: 1, justifyContent: 'center', gap: '2rem', }}>
+              {links.map((link) => (
+                <a
+                  key={link}
+                  href={`#${link}`}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleLinkClick(link)
+                  }}
+                  style={{
+                    color: activeLink === link ? '#2563eb' : '#374151',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1.05rem',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    textDecoration: 'none',
+                    transition: 'color 0.3s',
+                  }}
+                >
+                  {link}
+                  <span
                     style={{
-                      color: activeLink === link ? '#2563eb' : '#374151',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '1.05rem',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      position: 'relative',
-                      textDecoration: 'none',
-                      transition: 'color 0.3s',
+                      position: 'absolute',
+                      bottom: '-8px',
+                      left: 0,
+                      width: activeLink === link ? '100%' : '0%',
+                      height: '3px',
+                      backgroundColor: '#2563eb',
+                      transition: 'width 0.4s',
                     }}
-                  >
-                    {link}
-                    <span
-                      style={{
-                        position: 'absolute',
-                        bottom: '-8px',
-                        left: 0,
-                        width: activeLink === link ? '100%' : '0%',
-                        height: '3px',
-                        backgroundColor: '#2563eb',
-                        transition: 'width 0.4s',
-                      }}
-                    />
-                  </a>
-                ))}
-              </div>
-
-              <button
-                style={{
-                  backgroundColor: '#2563eb',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.5rem 1.5rem',
-                  borderRadius: '0.5rem',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '1.05rem',
-                  fontWeight: '500',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease-in-out',
-                }}
-              >
-                Login
-              </button>
+                  />
+                </a>
+              ))}
             </div>
+          )}
+
+          {/* Right Side */}
+          {!isMobile ? (
+            <button
+              style={{
+                backgroundColor: '#2563eb',
+                color: 'white',
+                border: 'none',
+                padding: '0.5rem 1.5rem',
+                borderRadius: '0.5rem',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '1.05rem',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease-in-out',
+                marginLeft: 'auto',
+              }}
+            >
+              Login
+            </button>
           ) : (
             <button
               aria-label="Toggle menu"
@@ -186,6 +185,8 @@ const Navbar = () => {
             </button>
           )}
         </div>
+
+        {/* Mobile Dropdown */}
         {isMobile && isMenuOpen && (
           <div
             style={{
@@ -216,7 +217,6 @@ const Navbar = () => {
                       fontSize: '1.1rem',
                       fontWeight: '500',
                       cursor: 'pointer',
-                      position: 'relative',
                       textDecoration: 'none',
                       padding: '0.25rem 0',
                     }}
