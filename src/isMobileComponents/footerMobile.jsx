@@ -6,7 +6,7 @@ import { BsTwitterX } from "react-icons/bs";// replace with X if using Fa6
 
 const accentColor = "37,99,235";
 
-const Footer = () => {
+const FooterMobile = () => {
   return (
     <footer
       className="w-full text-white pt-20 pb-10 overflow-hidden"
@@ -136,8 +136,8 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto flex justify-between space-x-6 text-white text-2xl mb-10" style={{
         marginTop: '2rem',
         marginBottom: '2rem',
-        fontSize: '1.5rem',
-        padding: '0 40%',
+        fontSize: '2rem',
+        padding: '0 2rem',
         color: '#9ca3af',
       }}>
         <FaFacebookF className="hover:text-[#2563eb] cursor-pointer transition" />
@@ -165,4 +165,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default FooterMobile;

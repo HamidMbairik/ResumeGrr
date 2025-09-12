@@ -3,7 +3,7 @@ import html2pdf from "html2pdf.js/dist/html2pdf.bundle";
 
 const accentColor = "37,99,235"; // RGB for #2563eb
 
-const TryItSection = () => {
+const TryItSectionMobile = () => {
   // Form state
   const [info, setInfo] = useState({
     name: "",
@@ -81,7 +81,7 @@ const TryItSection = () => {
         className="text-5xl md:text-6xl font-extrabold text-center mb-16 leading-tight"
         style={{
           marginBottom: '3rem',
-          fontSize: '6rem', // Increased from 3.5rem
+          fontSize: '4rem', // Increased from 3.5rem
           fontWeight: 700,
           letterSpacing: '-5px',
           fontFamily: 'Inter, sans-serif',
@@ -100,12 +100,13 @@ const TryItSection = () => {
         {/* --- FORM SECTION --- */}
         
         <form
-          className="bg-white rounded-3xl border shadow-2xl flex-1 flex flex-col wrap justify-center"
+          className="bg-white rounded-3xl border shadow-2xl flex-1 flex  flex-col wrap justify-center"
           style={{
             border: `2px solid rgba(${accentColor},0.18)`,
             boxShadow: `0 0 70px rgba(${accentColor},0.18)`,
             fontFamily: "Inter, sans-serif",
             minWidth: 300,
+            maxWidth: 'none',
             minHeight: 600,
             height: "100%",
             display: "flex",
@@ -115,6 +116,13 @@ const TryItSection = () => {
             marginRight: '1.5rem',
             borderRadius: '1.5rem',
             background: 'rgba(255, 255, 255, 0.9)',
+            marginBottom: '2rem', // spacing at bottom for mobile
+            //overflowY: 'auto',
+            width: '100%',
+            alignContent: 'center',
+            padding: '2rem',
+            marginLeft: 'auto',
+            marginRight: 'auto',
           }}
         >
           <h3
@@ -131,43 +139,44 @@ const TryItSection = () => {
             Enter Your Info
           </h3>
 
-          <div className="flex flex-col gap-6">
-            {/* Name + Job Title */}
-            <div className="flex gap-4">
-              <input
-                name="name"
-                value={info.name}
-                onChange={handleChange}
-                placeholder="Full Name"
-                className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
-                style={{
-                  fontFamily: "Inter, sans-serif",
-                  borderColor: `rgba(${accentColor},0.18)`,
-                  background: "rgba(245,248,255,0.8)",
-                  minHeight: 50,
-                  padding: "0.75rem 1rem",
-                  marginBottom: 4,
-                  marginRight: 4,
-                  borderRadius: "1.25rem",
-                }}
-              />
-              <input
-                name="title"
-                value={info.title}
-                onChange={handleChange}
-                placeholder="Job Title"
-                className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
-                style={{
-                  fontFamily: "Inter, sans-serif",
-                  borderColor: `rgba(${accentColor},0.18)`,
-                  background: "rgba(245,248,255,0.8)",
-                  minHeight: 50,
-                  padding: "0.75rem 1rem",
-                  marginBottom: 4,
-                  borderRadius: "1.25rem",
-                }}
-              />
-            </div>
+          <div className="flex flex-col justify-center items-center gap-6">
+            {/* Full Name */}
+            <input
+              name="name"
+              value={info.name}
+              onChange={handleChange}
+              placeholder="Full Name"
+              className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
+              style={{
+                fontFamily: "Inter, sans-serif",
+                borderColor: `rgba(${accentColor},0.18)`,
+                background: "rgba(245,248,255,0.8)",
+                minHeight: 50,
+                padding: "0.75rem 1rem",
+                marginBottom: 4,
+                borderRadius: "1.25rem",
+                width: '100%',
+              }}
+            />
+
+            {/* Job Title */}
+            <input
+              name="title"
+              value={info.title}
+              onChange={handleChange}
+              placeholder="Job Title"
+              className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
+              style={{
+                fontFamily: "Inter, sans-serif",
+                borderColor: `rgba(${accentColor},0.18)`,
+                background: "rgba(245,248,255,0.8)",
+                minHeight: 50,
+                padding: "0.75rem 1rem",
+                marginBottom: 4,
+                borderRadius: "1.25rem",
+                width: '100%',
+              }}
+            />
 
             {/* Professional Summary */}
             <textarea
@@ -185,45 +194,47 @@ const TryItSection = () => {
                 padding: "1rem",
                 marginBottom: 4,
                 resize: "vertical",
+                width: '100%',
               }}
             />
 
-            {/* Email + Phone */}
-            <div className="flex gap-4">
-              <input
-                name="email"
-                value={info.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
-                style={{
-                  fontFamily: "Inter, sans-serif",
-                  borderColor: `rgba(${accentColor},0.18)`,
-                  background: "rgba(245,248,255,0.8)",
-                  minHeight: 50,
-                  padding: "0.75rem 1rem",
-                  marginBottom: 4,
-                  marginRight: 4,
-                  borderRadius: "1.25rem",
-                }}
-              />
-              <input
-                name="phone"
-                value={info.phone}
-                onChange={handleChange}
-                placeholder="Phone"
-                className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
-                style={{
-                  fontFamily: "Inter, sans-serif",
-                  borderColor: `rgba(${accentColor},0.18)`,
-                  background: "rgba(245,248,255,0.8)",
-                  minHeight: 50,
-                  padding: "0.75rem 1rem",
-                  marginBottom: 4,
-                  borderRadius: "1.25rem",
-                }}
-              />
-            </div>
+            {/* Email */}
+            <input
+              name="email"
+              value={info.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
+              style={{
+                fontFamily: "Inter, sans-serif",
+                borderColor: `rgba(${accentColor},0.18)`,
+                background: "rgba(245,248,255,0.8)",
+                minHeight: 50,
+                padding: "0.75rem 1rem",
+                marginBottom: 4,
+                borderRadius: "1.25rem",
+                width: '100%',
+              }}
+            />
+
+            {/* Phone */}
+            <input
+              name="phone"
+              value={info.phone}
+              onChange={handleChange}
+              placeholder="Phone"
+              className="flex-1 p-4 border rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition text-lg"
+              style={{
+                fontFamily: "Inter, sans-serif",
+                borderColor: `rgba(${accentColor},0.18)`,
+                background: "rgba(245,248,255,0.8)",
+                minHeight: 50,
+                padding: "0.75rem 1rem",
+                marginBottom: 4,
+                borderRadius: "1.25rem",
+                width: '100%',
+              }}
+            />
 
             {/* Skills */}
             <textarea
@@ -240,11 +251,12 @@ const TryItSection = () => {
                 borderRadius: "1.25rem",
                 padding: "1rem",
                 resize: "vertical",
+                width: '100%',
               }}
             />
 
             {/* Experiences */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3" style={{ width: '100%' }}>
               <label style={{ fontWeight: 600 }}>Experiences</label>
               {experiences.map((exp, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
@@ -261,6 +273,7 @@ const TryItSection = () => {
                       borderRadius: "1.25rem",
                       padding: "1rem",
                       resize: "vertical",
+                      width: '100%',
                     }}
                   />
                   {experiences.length > 1 && (
@@ -272,7 +285,7 @@ const TryItSection = () => {
             </div>
 
             {/* Education */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3" style={{ width: '100%' }}>
               <label style={{ fontWeight: 600 }}>Education</label>
               {educations.map((edu, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
@@ -289,18 +302,19 @@ const TryItSection = () => {
                       borderRadius: "1.25rem",
                       padding: "1rem",
                       resize: "vertical",
+                      width: '100%',
                     }}
                   />
                   {educations.length > 1 && (
-                    <button type="button" onClick={() => removeEducation(idx)} style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: "0.75rem", padding: "0.5rem 0.8rem", fontWeight: 600, cursor: "pointer" }}>Remove</button>
+                    <button type="button" onClick={() => removeEducation(idx)} style={{ background: "#ef4444", color: "#fff", border: "none", borderRadius: "0.75rem", padding: "0.5rem 0.8rem", fontWeight: 600, cursor: "pointer", width: '100%' }}>Remove</button>
                   )}
                 </div>
               ))}
-              <button type="button" onClick={addEducation} style={{ marginTop: 4, padding: "0.5rem 1rem", borderRadius: "1rem", background: "#2563eb", color: "#fff", fontWeight: 500, border: "none", cursor: "pointer" }}>+ Add Education</button>
+              <button type="button" onClick={addEducation} style={{ marginTop: 4, padding: "0.5rem 1rem", borderRadius: "1rem", background: "#2563eb", color: "#fff", fontWeight: 500, border: "none", cursor: "pointer", width: '100%' }}>+ Add Education</button>
             </div>
 
             {/* Languages */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3" style={{ width: '100%' }}>
               <label style={{ fontWeight: 600 }}>Languages</label>
               {languages.map((lang, idx) => (
                 <div key={idx} className="flex gap-2 items-start">
@@ -474,4 +488,4 @@ const TryItSection = () => {
   );
 };
 
-export default TryItSection;
+export default TryItSectionMobile;

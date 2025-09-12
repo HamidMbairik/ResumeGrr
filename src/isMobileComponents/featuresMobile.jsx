@@ -37,7 +37,7 @@ const glowTitleStyle = {
   marginBottom: '3rem',
 };
 
-const Features = () => {
+const FeaturesMobile = () => {
   return (
     <section
       style={{
@@ -50,7 +50,7 @@ const Features = () => {
         <h2
           style={{
             marginBottom: '3rem',
-            fontSize: '6rem', // Increased from 3.5rem
+            fontSize: '4rem', // Increased from 3.5rem
             fontWeight: 700,
             letterSpacing: '-5px',
             fontFamily: 'Inter, sans-serif',
@@ -113,4 +113,4 @@ const Features = () => {
   );
 };
 
-export default Features;
+export default FeaturesMobile;

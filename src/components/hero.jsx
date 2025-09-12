@@ -22,16 +22,16 @@ const Hero = () => {
   const [color, setColor] = useState("37,99,235");
 
   // ---------- Typewriter state ----------
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0); // which phrase index we're on
-  const [displayText, setDisplayText] = useState(""); // the visible text being typed/deleted
-  const [isDeleting, setIsDeleting] = useState(false); // typing vs deleting
+  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Tweak these to change feel
-  const TYPING_SPEED = 80; // base ms per character when typing
-  const DELETING_SPEED = 40; // base ms per character when deleting
-  const PAUSE_BEFORE_DELETING = 1000; // ms to wait after fully typed before deleting
-  const PAUSE_AFTER_DELETING = 300; // ms to wait after fully deleted before starting next
-  const SPEED_VARIANCE = 40; // adds human-like randomness to speeds
+  const TYPING_SPEED = 80;
+  const DELETING_SPEED = 40;
+  const PAUSE_BEFORE_DELETING = 1000;
+  const PAUSE_AFTER_DELETING = 300;
+  const SPEED_VARIANCE = 40;
 
   // ---------- Mouse movement for glow ----------
   const handleMouseMove = (e) => {
@@ -97,39 +97,26 @@ const Hero = () => {
   }, []);
 
   // ---------- Robust typewriter effect ----------
-  /*
-    Pattern: effect depends on displayText / isDeleting / currentPhraseIndex.
-    Each pass schedules exactly one setTimeout to update the displayed text (or flip state),
-    and clears it in cleanup. This avoids multiple competing timeouts and avoids
-    re-running due to a changing array reference.
-  */
   useEffect(() => {
     const currentPhrase = PHRASES[currentPhraseIndex];
     let timeoutId;
 
-    // Helper to get slightly randomized speed for more human feel
     const rand = (base) => base + Math.floor(Math.random() * SPEED_VARIANCE);
 
     if (!isDeleting) {
-      // Typing mode
       if (displayText === currentPhrase) {
-        // Fully typed, pause then start deleting
         timeoutId = setTimeout(() => setIsDeleting(true), PAUSE_BEFORE_DELETING);
       } else {
-        // Add next character
         const next = currentPhrase.slice(0, displayText.length + 1);
         timeoutId = setTimeout(() => setDisplayText(next), rand(TYPING_SPEED));
       }
     } else {
-      // Deleting mode
       if (displayText === "") {
-        // Fully deleted — advance to next phrase after a short pause
         timeoutId = setTimeout(() => {
           setIsDeleting(false);
           setCurrentPhraseIndex((i) => (i + 1) % PHRASES.length);
         }, PAUSE_AFTER_DELETING);
       } else {
-        // Remove one character
         const next = currentPhrase.slice(0, displayText.length - 1);
         timeoutId = setTimeout(() => setDisplayText(next), rand(DELETING_SPEED));
       }
@@ -142,21 +129,15 @@ const Hero = () => {
   return (
     <div
       className="h-screen relative overflow-hidden"
-      style={{
-        //background: "linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)",
-        margin: 0,
-      }}
+      style={{ margin: 0 }}
       onMouseMove={handleMouseMove}
     >
       <div
         className="flex items-center justify-between max-w-[1400px] w-full mx-auto px-8 sm:px-16 lg:px-24 h-full"
-        style={{
-          padding: "0 55px",
-        }}
+        style={{ padding: "0 55px" }}
       >
         {/* Left Content */}
         <div className="flex flex-col justify-center max-w-lg mr-16 z-10">
-          {/* Big title */}
           <h1
             className="text-7xl sm:text-8xl font-extrabold mb-6 leading-tight"
             style={{
@@ -166,18 +147,12 @@ const Hero = () => {
             }}
           >
             Create a{" "}
-            <span
-              style={{
-                color: `rgb(${color})`,
-                textShadow: `0 0 60px rgba(${color},0.8)`,
-              }}
-            >
+            <span style={{ color: `rgb(${color})`, textShadow: `0 0 60px rgba(${color},0.8)` }}>
               Job-winning
             </span>{" "}
             Resume
           </h1>
 
-          {/* Typewriter - 'displayText' updates char-by-char */}
           <h1
             className="text-5xl sm:text-6xl font-semibold mb-8"
             style={{
@@ -187,13 +162,12 @@ const Hero = () => {
               color: "#2563eb",
               marginTop: ".5rem",
               whiteSpace: "nowrap",
-              fontSize: '2.9rem',
-              fontWeight: '400', // keep the typed phrase on one line
+              fontSize: "2.9rem",
+              fontWeight: "400",
             }}
-            aria-live="polite" // accessibility: announce changes
+            aria-live="polite"
           >
             {displayText}
-            {/* custom blinking cursor (independent of React re-renders) */}
             <span
               style={{
                 display: "inline-block",
@@ -221,7 +195,6 @@ const Hero = () => {
             Enter your details and let AI craft a professional resume <br /> and cover for you, save hours of stress and <br /> stand out from the crowd.
           </h3>
 
-          {/* CTA */}
           <div className="flex flex-col" style={{ width: "100%", marginTop: "3rem" }}>
             <div className="flex justify-center mb-4">
               <span
@@ -268,9 +241,7 @@ const Hero = () => {
         {/* Right Image */}
         <div
           className="flex justify-end items-center max-w-md h-full z-10"
-          style={{
-            width: "40rem",
-          }}
+          style={{ width: "40rem" }}
         >
           <img src={heroImg} alt="Hero" className="h-auto max-h-[85%] object-contain" />
         </div>
@@ -316,7 +287,6 @@ const Hero = () => {
             60% { transform: translateY(-5px); }
           }
 
-          /* cursor blink animation */
           @keyframes resumegrr-blink {
             0% { opacity: 1; }
             50% { opacity: 0; }
